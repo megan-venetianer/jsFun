@@ -27,21 +27,25 @@ const kittyPrompts = {
 
     // Return an array of just the names of kitties who are orange e.g.
     // ['Tiger', 'Snickers']
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+
+    const orangeKitties = kitties.filter(kitty => kitty.color === 'orange');
+    const result = orangeKitties.map(kitty =>
+      kitty.name);
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since we are given an array and want to return a subset of that array we will initially use the filter method to return only the kittens that are orange. This will still leave us with the entire kitten object though, so we will also need to use the map method next to return an array of the same length that only includes the name of the kitten.
   },
 
   sortByAge() {
     // Sort the kitties by their age
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.sort((kitty1, kitty2) => {
+      return kitty2.age - kitty1.age});
     return result;
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Since we need to sort the kitties by their age I used the sort method. This automatically sorts in ascending order, and since we need to sort in descending order I subracted the first parameter from the second.
   },
 
   growUp() {
@@ -58,13 +62,12 @@ const kittyPrompts = {
     // },
     // ...etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = kitties.map(kitty => {
+      kitty.age += 2
+      return kitty});
     return result;
   }
 };
-
-
-
 
 
 
@@ -90,7 +93,17 @@ const clubPrompts = {
     //   ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    //
+
+    let result = clubs.reduce((acc, club) => {
+      club.members.forEach(name => {
+        if(!acc[name]) {
+          acc[name] = [];
+        }
+        acc[name].push(club.club)
+      });
+      return acc;
+    }, {});
     return result;
 
     // Annotation:
@@ -126,7 +139,12 @@ const modPrompts = {
     //   { mod: 4, studentsPerInstructor: 8 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = mods.map(mod => {
+      return {
+        mod: mod.mod,
+        studentsPerInstructor: mod.students / mod.instructors
+      }
+    })
     return result;
 
     // Annotation:
@@ -161,7 +179,12 @@ const cakePrompts = {
     //    ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(cakeStock => {
+      return {
+        flavor: cakeStock.cakeFlavor,
+        inStock: cakeStock.inStock
+      }
+    })
     return result;
 
     // Annotation:
@@ -189,7 +212,9 @@ const cakePrompts = {
     // ..etc
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.filter(cake => {
+      return cake.inStock !== 0
+    })
     return result;
 
     // Annotation:
@@ -200,7 +225,10 @@ const cakePrompts = {
     // Return the total amount of cakes in stock e.g.
     // 59
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce((inStock, cake) => {
+      inStock += cake.inStock
+      return inStock
+    }, 0)
     return result;
 
     // Annotation:
@@ -212,7 +240,9 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.map(cake => {
+      return cake.toppings
+    })
     return result;
 
     // Annotation:
