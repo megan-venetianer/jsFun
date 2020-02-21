@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const { kitties } = require('./datasets/kitties');
 const { clubs } = require('./datasets/clubs');
 const { mods } = require('./datasets/mods');
@@ -240,9 +242,14 @@ const cakePrompts = {
     // every cake in the dataset e.g.
     // ['dutch process cocoa', 'toasted sugar', 'smoked sea salt', 'berries', ..etc]
 
-    const result = cakes.map(cake => {
-      return cake.toppings
-    })
+    const result = cakes.reduce((acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if (!acc.includes(topping)) {
+          acc.push(topping)
+        }
+      })
+      return acc
+    }, [])
     return result;
 
     // Annotation:
@@ -260,7 +267,16 @@ const cakePrompts = {
     //    ...etc
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = cakes.reduce((acc, cake) => {
+      cake.toppings.forEach(topping => {
+        if(!acc[topping]) {
+          acc[topping] = 1
+        } else {
+          acc[topping] = acc[topping] + 1
+        }
+      })
+      return acc
+    }, {})
     return result;
 
     // Annotation:
@@ -295,7 +311,7 @@ const classPrompts = {
     //   { roomLetter: 'G', program: 'FE', capacity: 29 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.filter(classroom => classroom.program === 'FE')
     return result;
 
     // Annotation:
@@ -310,7 +326,18 @@ const classPrompts = {
     //   beCapacity: 96
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.reduce((acc, classroom) => {
+      if(classroom.program === 'FE') {
+         acc.feCapacity += classroom.capacity;
+      } else {
+        acc.beCapacity += classroom.capacity
+      }
+      return acc
+    }, {
+      feCapacity: 0,
+      beCapacity: 0
+    }
+    )
     return result;
 
     // Annotation:
@@ -320,7 +347,9 @@ const classPrompts = {
   sortByCapacity() {
     // Return the array of classrooms sorted by their capacity (least capacity to greatest)
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = classrooms.sort((a, b) => {
+      return a.capacity - b.capacity
+    })
     return result;
 
     // Annotation:
@@ -347,8 +376,14 @@ const bookPrompts = {
     //   'Catch-22', 'Treasure Island']
 
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.filter(book => {
+      return book.genre !== 'True Crime' && book.genre !== 'Horror'
+    }).map(filteredBooks => {
+      return filteredBooks.title
+    })
     return result;
+
+
 
     // Annotation:
     // Write your annotation here as a comment
@@ -362,8 +397,16 @@ const bookPrompts = {
     //  { title: 'Life of Pi', year: 2001 },
     //  { title: 'The Curious Incident of the Dog in the Night-Time', year: 2003 }]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = books.filter(newBook => {
+      return newBook.published >= 1990
+    }).map(book => {
+      return {
+        title: book.title,
+        year: book.published
+      }
+    })
     return result;
+
 
     // Annotation:
     // Write your annotation here as a comment
@@ -385,7 +428,10 @@ const weatherPrompts = {
     // return an array of all the average temperatures. Eg:
     // [ 40, 40, 44.5, 43.5, 57, 35, 65.5, 62, 14, 46.5 ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.reduce((acc, weatherData) => {
+      acc.push((weatherData.temperature.high + weatherData.temperature.low) / 2)
+      return acc
+    }, [])
     return result;
 
     // Annotation:
@@ -399,7 +445,11 @@ const weatherPrompts = {
     // 'New Orleans, Louisiana is sunny.',
     // 'Raleigh, North Carolina is mostly sunny.' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = weather.filter(sunnyWeather => {
+      return sunnyWeather.type.includes('sunny')
+    }).map(weatherInfo => {
+      return `${weatherInfo.location} is ${weatherInfo.type}.`
+    })
     return result;
 
     // Annotation:
@@ -415,12 +465,13 @@ const weatherPrompts = {
     //   temperature: { high: 49, low: 38 }
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = weather.sort((place1, place2) => {
+      return place2.humidity - place1.humidity;
+    })
+    return result[0];
 
     // Annotation:
     // Write your annotation here as a comment
-
   }
 };
 
@@ -442,7 +493,17 @@ const nationalParksPrompts = {
     //   parksVisited: ["Rocky Mountain", "Acadia", "Zion"]
     //}
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce((acc, park) => {
+      if(park.visited === true) {
+        acc.parksVisited.push(park.name)
+      } else {
+        acc.parksToVisit.push(park.name)
+      }
+      return acc
+    }, {
+      parksToVisit: [],
+      parksVisited: []
+    })
     return result;
 
     // Annotation:
@@ -458,8 +519,11 @@ const nationalParksPrompts = {
     // { Utah: 'Zion' },
     // { Florida: 'Everglades' } ]
 
-
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.map(park => {
+      return {
+        [park.location]: park.name
+      }
+    })
     return result;
 
     // Annotation:
@@ -482,7 +546,14 @@ const nationalParksPrompts = {
     //   'backpacking',
     //   'rock climbing' ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = nationalParks.reduce((acc, park) => {
+      park.activities.forEach(activity => {
+        if(!acc.includes(activity)) {
+          acc.push(activity)
+        }
+      })
+      return acc;
+    }, [])
     return result;
 
     // Annotation:
@@ -509,8 +580,13 @@ const breweryPrompts = {
     // Return the total beer count of all beers for every brewery e.g.
     // 40
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    const result = breweries.reduce((acc, brewery) => {
+      brewery.beers.forEach(beer => {
+        acc.push(beer.name);
+      })
+      return acc;
+    }, [])
+    return result.length;
 
     // Annotation:
     // Write your annotation here as a comment
@@ -525,7 +601,12 @@ const breweryPrompts = {
     // ...etc.
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = breweries.map(brewery => {
+      return {
+        name: brewery.name,
+        beerCount: brewery.beers.length
+      }
+    })
     return result;
 
     // Annotation:
@@ -537,11 +618,22 @@ const breweryPrompts = {
     // e.g.
     // { name: 'Barrel Aged Nature\'s Sweater', type: 'Barley Wine', abv: 10.9, ibu: 40 }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
-    return result;
+    let beers = [];
+    const breweryList = breweries.forEach(brewery => {
+      brewery.beers.forEach(beer => {
+        beers.push(beer)
+      })
+    })
+
+    const result = beers.sort((beer1, beer2) => beer2.abv - beer1.abv
+    )
+
+    return result[0]
 
     // Annotation:
-    // Write your annotation here as a comment
+    // Iterate over breweries array and create one array with all beers in it
+    // When in beer array, sort through the beers array to find highest ABV
+
   }
 };
 
@@ -585,7 +677,21 @@ const turingPrompts = {
     //  { name: 'Robbie', studentCount: 18 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let instructorInfo = instructors.map(instructorName => {
+      cohorts.forEach(cohort => {
+        if(cohort.module === instructorName.module) {
+          instructorName.studentCount = cohort.studentCount;
+        }
+      })
+      return instructorName
+    })
+
+    const result = instructorInfo.map(instructor => {
+      return {
+        name: instructor.name,
+        studentCount: instructor.studentCount
+      }
+    })
     return result;
 
     // Annotation:
@@ -599,8 +705,27 @@ const turingPrompts = {
     // cohort1804: 10.5
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const cohortInfo = cohorts.map(cohort => {
+      instructors.forEach(instructor => {
+        if (!cohort.instructors) {
+          cohort.instructors = [];
+        }
+        if (instructor.module === cohort.module) {
+          cohort.instructors.push(instructor.name);
+        }
+      })
+      return cohort;
+    });
+
+
+
+    const result = cohortInfo.reduce((acc, cohort) => {
+      acc['cohort' + cohort.cohort] = cohort.studentCount / cohort.instructors.length
+      return acc;
+    }, {})
+
     return result;
+
 
     // Annotation:
     // Write your annotation here as a comment
@@ -621,11 +746,25 @@ const turingPrompts = {
     //     Will: [1, 2, 3, 4]
     //   }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((acc, instructor) => {
+      acc[instructor.name] = []
+      cohorts.forEach(cohort => {
+        if(!acc[instructor.name]) {
+
+        }
+        cohort.curriculum.forEach(topic => {
+          if(instructor.teaches.includes(topic) && !acc[instructor.name].includes(cohort.module)) {
+            acc[instructor.name].push(cohort.module);
+          }
+        })
+      })
+      return acc;
+    }, {})
     return result;
 
     // Annotation:
     // Write your annotation here as a comment
+    // if instructors.teaches includes a word from cohort.curriculum, add that module number to that teacher's object
   },
 
   curriculumPerTeacher() {
@@ -638,7 +777,15 @@ const turingPrompts = {
     //   recursion: [ 'Pam', 'Leta' ]
     // }
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    const result = instructors.reduce((acc, instructor) => {
+      instructor.teaches.forEach(skill => {
+        if(!acc[skill]) {
+          acc[skill] = [];
+        }
+        acc[skill].push(instructor.name);
+      })
+      return acc;
+    }, {})
     return result;
 
     // Annotation:
@@ -673,12 +820,48 @@ const bossPrompts = {
     //   { bossName: 'Scar', sidekickLoyalty: 16 }
     // ]
 
-    const result = 'REPLACE WITH YOUR RESULT HERE';
+    let bossNames = Object.keys(bosses);
+
+    console.log(sidekicks[0].boss)
+    const result = bossNames.map(boss => {
+      boss.reduce((acc, boss) => {
+
+        return acc;
+      }, {})
+    })
+
     return result;
+}
+
+    // const result = sidekicks.map(sidekick => {
+    //   console.log(sidekick)
+    //   return sidekick.reduce((acc, sidekickName) => {
+    //     acc[bossName] = sidekickName.boss;
+    //     acc[sideKickLoyalty] = acc.sideKickLoyalty + sidekickName.loyaltyToBoss
+    //     return acc;
+    //   }, {
+    //     bossName: ' ',
+    //     sideKickLoyalty: 0
+    //   })
+    // })
+  //   return result;
+  // }
+    //
+    // const result = sidekicks.reduce((acc, sidekick) => {
+    //   acc.bossName = sidekick.boss;
+    //   acc.sideKickLoyalty + sidekick.loyaltyToBoss;
+    //   console.log(acc)
+    //   return acc;
+    // }, {
+    //   bossName: ' ',
+    //   sidekickLoyalty: 0
+    // })
+    // console.log(result)
+    // return result;
 
     // Annotation:
     // Write your annotation here as a comment
-  }
+
 };
 
 
